@@ -9,7 +9,7 @@
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
-        android:layout_height="400px"
+        android:layout_height="600px"
         android:background="@color/colorPrimaryDark"
         android:orientation="vertical"
         android:padding="40px"
@@ -44,7 +44,36 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingTop="240px">
+
+            <TextView
+                android:id="@+id/drinkName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:textColor="#ffa41b"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+        </LinearLayout>
     </ScrollView>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/drinkImage"
+            android:layout_width="600px"
+            android:layout_height="600px"
+            android:scaleType="fitCenter" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

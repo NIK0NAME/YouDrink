@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements CustomCardAdapter
                 }*/
                     try {
                         final JSONObject itm = (JSONObject) ((JSONArray) response.get("drinks")).get(0);
-                        Drink d = new Drink(itm.get("idDrink").toString(), itm.get("strDrink").toString(), null);
+                        Drink d = new Drink(itm.get("idDrink").toString(), itm.get("strDrink").toString(), null, itm.get("strDrinkThumb").toString());
                         final Drink dr = d;
 
                         Thread h = new Thread(new Runnable() {
@@ -163,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements CustomCardAdapter
                 .setPositiveButton("Ok", null)
                 .show();*/
         Intent i = new Intent(this, DrinkScreen.class);
+        i.putExtra("drink", d);
         startActivity(i);
     }
 
