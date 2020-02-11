@@ -81,7 +81,7 @@
                     android:background="@drawable/round_rect"
                     android:orientation="vertical"
                     android:paddingTop="40px"
-                    android:paddingBottom="40px">
+                    android:paddingBottom="10px">
 
                     <LinearLayout
                         android:layout_width="match_parent"

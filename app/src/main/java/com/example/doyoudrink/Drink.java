@@ -9,11 +9,13 @@ public class Drink implements Serializable {
     public String name;
     transient public Drawable img;
     public String imgUrl;
+    public boolean like;
 
     public Drink(String id, String name, Drawable img, String url) {
         this.id = id;
         this.name = name;
         this.img = img;
         this.imgUrl = url;
+        this.like = false;
     }
 }
