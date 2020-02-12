@@ -4,6 +4,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,6 +14,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -50,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements CustomCardAdapter
     public List<Drink> bebidas;
     public List<Ingredient> ingredientes;
     public static DbManager dbManager;
+    public DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements CustomCardAdapter
         buscador = findViewById(R.id.buscador);
         meet_a_drink_list = findViewById(R.id.meet_a_drink_list);
         reloadRandoms = findViewById(R.id.reloadRandoms);
+        drawerLayout = findViewById(R.id.drawer_layout);
 
         reloadRandoms.setOnClickListener(this);
 
@@ -68,8 +74,12 @@ public class MainActivity extends AppCompatActivity implements CustomCardAdapter
         bebidas = new ArrayList<>();
         ingredientes = new ArrayList<>();
 
-        navigation = findViewById(R.id.navigation);
+        navigation = (NavigationView) findViewById(R.id.navigation);
         navigation.setCheckedItem(0);
+
+        if (navigation != null) {
+            setupDrawerContent(navigation);
+        }
 
         MainActivity.dbManager = new DbManager(this, "drinkData", null, 1);
 
@@ -89,6 +99,65 @@ public class MainActivity extends AppCompatActivity implements CustomCardAdapter
         randomDrinks = new JSONArray();
         fillRandomDrinks();
         getSomeIngridients();
+    }
+
+    public void throwSimpleAlert(String msg) {
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+                .setTitle("Simple alert")
+                .setMessage(msg)
+                .setPositiveButton("Ok", null)
+                .show();
+    }
+
+    private void setupDrawerContent(NavigationView navigationView) {
+        final Intent i = new Intent(this, LoginScreen.class);
+        throwSimpleAlert("entra");
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        // Marcar item presionado
+                        throwSimpleAlert("se clikooo");
+                        menuItem.setChecked(true);
+                        // Crear nuevo fragmento
+                        if(menuItem.getItemId() == R.id.nav_log) {
+                            throwSimpleAlert("intentando abrir login");
+                            startActivity(i);
+                            //startActivityForResult(i, 20);
+                        }
+                        String title = menuItem.getTitle().toString();
+                        //selectItem(title);
+                        return true;
+                    }
+                }
+        );
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.left_menu, menu);
+        return true;
+        //return super.onCreateOptionsMenu(menu);
+    }
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        throwSimpleAlert(item.toString());
+        if(item.getItemId() == R.id.nav_log) {
+            /*Intent i = new Intent(this, LoginScreen.class);
+            startActivity(i);*/
+            drawerLayout.openDrawer(GravityCompat.START);
+        }
+        /*switch (item.getItemId()) {
+            case android.R.id.home:
+                throwSimpleAlert("intentando abrir drawer");
+                drawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }*/
+        return super.onOptionsItemSelected(item);
     }
 
     public void fillRandomDrinks() {

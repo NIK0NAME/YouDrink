@@ -5,14 +5,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:id="@+id/drawer_layout">
+
+   <!-- <android.support.design.widget.NavigationView
+        android:id="@+id/navigation"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start|left"
+        android:focusableInTouchMode="true"
+        app:headerLayout="@layout/menu_header"
+        android:background="@color/colorPrimaryDark"
+        app:itemTextColor="#ffa41b"
+        app:itemShapeFillColor="#fff"
+        app:menu="@menu/left_menu"
+        />-->
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start|left"
-        android:focusableInTouchMode="true"
+        android:fitsSystemWindows="true"
         app:headerLayout="@layout/menu_header"
         android:background="@color/colorPrimaryDark"
         app:itemTextColor="#ffa41b"
