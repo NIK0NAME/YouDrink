@@ -16,6 +16,9 @@
         <activity android:name=".LoginScreen" />
         <activity android:name=".DrinkScreen" />
         <activity android:name=".MainActivity">
+
+        </activity>
+        <activity android:name=".AppScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

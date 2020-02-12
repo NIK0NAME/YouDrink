@@ -32,7 +32,17 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onClick(View view) {
         if(view == goIn) {
-
+            String user = username.getText().toString();
+            String p = pass.getText().toString();
+            int res = AppScreen.dbManager.makeLogin(user, p);
+            if(res >= 0) {
+                AppScreen.user = new User(res, user);
+                 finish();
+            }else {
+                username.setText("");
+                username.setError("We cant find this datos");
+                pass.setText("");
+            }
         }
     }
 }

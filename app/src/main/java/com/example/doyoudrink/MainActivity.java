@@ -1,15 +1,21 @@
 package com.example.doyoudrink;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -38,7 +45,7 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
-public class MainActivity extends AppCompatActivity implements CustomCardAdapter.ItemClickListener, View.OnClickListener {
+public class MainActivity extends Fragment implements CustomCardAdapter.ItemClickListener, View.OnClickListener {
 
     //COLOR
     //https://colorhunt.co/palette/171238
@@ -50,114 +57,57 @@ public class MainActivity extends AppCompatActivity implements CustomCardAdapter
     public CustomCardAdapter cardAdapter, ingridintAdapter;
     public NavigationView navigation;
     public JSONArray randomDrinks;
-    public ImageButton reloadRandoms;
+    public ImageButton reloadRandoms, btnMenu;
     public List<Drink> bebidas;
     public List<Ingredient> ingredientes;
     public static DbManager dbManager;
     public DrawerLayout drawerLayout;
+    public static User user;
+    public Context cnt;
+
+    public MainActivity(Context c) {
+        cnt = c;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        final View view = inflater.inflate(R.layout.home_screen, container, false);
 
-        buscador = findViewById(R.id.buscador);
-        meet_a_drink_list = findViewById(R.id.meet_a_drink_list);
-        reloadRandoms = findViewById(R.id.reloadRandoms);
-        drawerLayout = findViewById(R.id.drawer_layout);
+        meet_a_drink_list = (RecyclerView) view.findViewById(R.id.meet_a_drink_list);
+        reloadRandoms = (ImageButton) view.findViewById(R.id.reloadRandoms);
+        //btnMenu = findViewById(R.id.btnMenu);
 
         reloadRandoms.setOnClickListener(this);
+        //btnMenu.setOnClickListener(this);
 
         randomDrinks = new JSONArray();
         randomDrinks.put(new JSONObject());
 
+        MainActivity.user = null;
+
         bebidas = new ArrayList<>();
         ingredientes = new ArrayList<>();
 
-        navigation = (NavigationView) findViewById(R.id.navigation);
-        navigation.setCheckedItem(0);
-
-        if (navigation != null) {
-            setupDrawerContent(navigation);
-        }
-
-        MainActivity.dbManager = new DbManager(this, "drinkData", null, 1);
-
-        /*AlertDialog dialog = new MaterialAlertDialogBuilder(this)
-                .setTitle("Accion DB")
-                .setMessage(msg)
-                .setPositiveButton("Ok", null)
-                .show();*/
-
-        LinearLayoutManager layoutManager= new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager layoutManager= new LinearLayoutManager(cnt,LinearLayoutManager.HORIZONTAL, false);
         meet_a_drink_list.setLayoutManager(layoutManager);
 
-        cardAdapter = new CustomCardAdapter(this, bebidas);
+        cardAdapter = new CustomCardAdapter(cnt, bebidas);
         cardAdapter.setClickListener(this);
         meet_a_drink_list.setAdapter(cardAdapter);
 
         randomDrinks = new JSONArray();
         fillRandomDrinks();
         getSomeIngridients();
+
+        return view;
     }
 
     public void throwSimpleAlert(String msg) {
-        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+        AlertDialog dialog = new MaterialAlertDialogBuilder(cnt)
                 .setTitle("Simple alert")
                 .setMessage(msg)
                 .setPositiveButton("Ok", null)
                 .show();
-    }
-
-    private void setupDrawerContent(NavigationView navigationView) {
-        final Intent i = new Intent(this, LoginScreen.class);
-        throwSimpleAlert("entra");
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        // Marcar item presionado
-                        throwSimpleAlert("se clikooo");
-                        menuItem.setChecked(true);
-                        // Crear nuevo fragmento
-                        if(menuItem.getItemId() == R.id.nav_log) {
-                            throwSimpleAlert("intentando abrir login");
-                            startActivity(i);
-                            //startActivityForResult(i, 20);
-                        }
-                        String title = menuItem.getTitle().toString();
-                        //selectItem(title);
-                        return true;
-                    }
-                }
-        );
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.left_menu, menu);
-        return true;
-        //return super.onCreateOptionsMenu(menu);
-    }
-
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        throwSimpleAlert(item.toString());
-        if(item.getItemId() == R.id.nav_log) {
-            /*Intent i = new Intent(this, LoginScreen.class);
-            startActivity(i);*/
-            drawerLayout.openDrawer(GravityCompat.START);
-        }
-        /*switch (item.getItemId()) {
-            case android.R.id.home:
-                throwSimpleAlert("intentando abrir drawer");
-                drawerLayout.openDrawer(GravityCompat.START);
-                return true;
-        }*/
-        return super.onOptionsItemSelected(item);
     }
 
     public void fillRandomDrinks() {
@@ -186,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements CustomCardAdapter
                                     a.setAntiAlias(true);
                                     a.setCircular(true);
                                     dr.img = a;
-                                    runOnUiThread(new Runnable() {
+                                    ((AppScreen) getActivity()).runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
                                             bebidas.add(dr);
@@ -260,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements CustomCardAdapter
                 .setMessage("Drink " + d.name)
                 .setPositiveButton("Ok", null)
                 .show();*/
-        Intent i = new Intent(this, DrinkScreen.class);
+        Intent i = new Intent(cnt, DrinkScreen.class);
         i.putExtra("drink", d);
         startActivity(i);
     }
@@ -273,6 +223,8 @@ public class MainActivity extends AppCompatActivity implements CustomCardAdapter
             cardAdapter.notifyItemRangeRemoved(0, fin);
             cardAdapter.notifyDataSetChanged();
             fillRandomDrinks();
+        }else if(view == btnMenu) {
+            drawerLayout.openDrawer(GravityCompat.START);
         }
     }
 }

@@ -48,6 +48,26 @@ public class DbManager extends SQLiteOpenHelper {
         }
     }
 
+    public int makeLogin(String user, String pass) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        try {
+            int ret;
+            String[] args = new String[] {user, pass};
+            Cursor c = db.rawQuery(" SELECT COUNT(username), _id FROM user WHERE username=? AND pass=?", args);
+            c.moveToFirst();
+            int num = c.getInt(0);
+            if(num > 0) {
+                ret = c.getInt(1);
+            }else {
+                ret = -2;
+            }
+            return ret;
+        }catch (Exception ex) {
+            return -1;
+        }
+    }
+
     public int likeDrink(int userID, String drinkId) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();

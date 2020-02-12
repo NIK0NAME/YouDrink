@@ -1,5 +1,6 @@
 package com.example.doyoudrink;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -11,6 +12,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -40,10 +43,14 @@ public class DrinkScreen extends AppCompatActivity implements View.OnClickListen
 
         this.drink = (Drink) getIntent().getSerializableExtra("drink");
 
-        if(MainActivity.dbManager.doLikeDrink(1, this.drink.id)) {
-            likeButton.setForegroundTintList(ColorStateList.valueOf(Color.RED));
+        if(AppScreen.user != null) {
+            if(AppScreen.dbManager.doLikeDrink(MainActivity.user.id, this.drink.id)) {
+                likeButton.setForegroundTintList(ColorStateList.valueOf(Color.RED));
+            }else {
+                likeButton.setForegroundTintList(ColorStateList.valueOf(Color.GRAY));
+            }
         }else {
-        likeButton.setForegroundTintList(ColorStateList.valueOf(Color.GRAY));
+            likeButton.setForegroundTintList(ColorStateList.valueOf(Color.GRAY));
         }
         drinkName.setText(drink.name);
         drinkDesk.setText(drink.desc);
@@ -78,12 +85,21 @@ public class DrinkScreen extends AppCompatActivity implements View.OnClickListen
         if(view == exitDrink) {
             finish();
         }else if(view == likeButton) {
-            int res = MainActivity.dbManager.likeDrink(1, this.drink.id);
-            if(res == 1) {
-                likeButton.setForegroundTintList(ColorStateList.valueOf(Color.RED));
-            }else if(res == 0) {
-                likeButton.setForegroundTintList(ColorStateList.valueOf(Color.GRAY));
+            if(AppScreen.user != null) {
+                int res = AppScreen.dbManager.likeDrink(MainActivity.user.id, this.drink.id);
+                if(res == 1) {
+                    likeButton.setForegroundTintList(ColorStateList.valueOf(Color.RED));
+                }else if(res == 0) {
+                    likeButton.setForegroundTintList(ColorStateList.valueOf(Color.GRAY));
+                }
+            }else {
+                AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+                        .setTitle("Hellow there")
+                        .setMessage("Need to be loged for this action!")
+                        .setPositiveButton("Ok", null)
+                        .show();
             }
+
         }
     }
 }
