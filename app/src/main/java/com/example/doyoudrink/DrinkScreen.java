@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -18,7 +20,9 @@ public class DrinkScreen extends AppCompatActivity implements View.OnClickListen
     public ImageButton exitDrink;
     public Drink drink;
     public ImageView drinkImage;
-    public TextView drinkName;
+    public TextView drinkName, drinkDesk;
+    public DbManager dbManager;
+    public ImageButton likeButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,13 +32,21 @@ public class DrinkScreen extends AppCompatActivity implements View.OnClickListen
         exitDrink = findViewById(R.id.exitDrink);
         drinkImage = findViewById(R.id.drinkImage);
         drinkName = findViewById(R.id.drinkName);
+        likeButton = findViewById(R.id.likeButton);
+        drinkDesk = findViewById(R.id.drinkDesk);
 
         exitDrink.setOnClickListener(this);
+        likeButton.setOnClickListener(this);
 
-        drink = (Drink) getIntent().getSerializableExtra("drink");
+        this.drink = (Drink) getIntent().getSerializableExtra("drink");
 
-
+        if(MainActivity.dbManager.doLikeDrink(1, this.drink.id)) {
+            likeButton.setForegroundTintList(ColorStateList.valueOf(Color.RED));
+        }else {
+        likeButton.setForegroundTintList(ColorStateList.valueOf(Color.GRAY));
+        }
         drinkName.setText(drink.name);
+        drinkDesk.setText(drink.desc);
 
         Thread h = new Thread(new Runnable() {
             @Override
@@ -45,7 +57,7 @@ public class DrinkScreen extends AppCompatActivity implements View.OnClickListen
                     //Drawable image = RoundedBitmapDrawable.createFromStream(URLcontent, "your source link");
                     final RoundedBitmapDrawable a = RoundedBitmapDrawableFactory.create(getResources(), URLcontent);
                     a.setAntiAlias(true);
-                    a.setCornerRadius(50.0f);
+                    a.setCornerRadius(10.0f);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -65,6 +77,13 @@ public class DrinkScreen extends AppCompatActivity implements View.OnClickListen
     public void onClick(View view) {
         if(view == exitDrink) {
             finish();
+        }else if(view == likeButton) {
+            int res = MainActivity.dbManager.likeDrink(1, this.drink.id);
+            if(res == 1) {
+                likeButton.setForegroundTintList(ColorStateList.valueOf(Color.RED));
+            }else if(res == 0) {
+                likeButton.setForegroundTintList(ColorStateList.valueOf(Color.GRAY));
+            }
         }
     }
 }

@@ -43,11 +43,13 @@ public class MainActivity extends AppCompatActivity implements CustomCardAdapter
     public TextInputEditText buscador;
     public LinearLayout firstSlide;
     public RecyclerView meet_a_drink_list;
-    public CustomCardAdapter cardAdapter;
+    public CustomCardAdapter cardAdapter, ingridintAdapter;
     public NavigationView navigation;
     public JSONArray randomDrinks;
     public ImageButton reloadRandoms;
     public List<Drink> bebidas;
+    public List<Ingredient> ingredientes;
+    public static DbManager dbManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +66,18 @@ public class MainActivity extends AppCompatActivity implements CustomCardAdapter
         randomDrinks.put(new JSONObject());
 
         bebidas = new ArrayList<>();
+        ingredientes = new ArrayList<>();
 
         navigation = findViewById(R.id.navigation);
         navigation.setCheckedItem(0);
+
+        MainActivity.dbManager = new DbManager(this, "drinkData", null, 1);
+
+        /*AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+                .setTitle("Accion DB")
+                .setMessage(msg)
+                .setPositiveButton("Ok", null)
+                .show();*/
 
         LinearLayoutManager layoutManager= new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false);
         meet_a_drink_list.setLayoutManager(layoutManager);
@@ -77,24 +88,21 @@ public class MainActivity extends AppCompatActivity implements CustomCardAdapter
 
         randomDrinks = new JSONArray();
         fillRandomDrinks();
+        getSomeIngridients();
     }
 
     public void fillRandomDrinks() {
-
         if(bebidas.size() < 12) {
             AsyncHttpClient client = new AsyncHttpClient();
             client.get("https://www.thecocktaildb.com/api/json/v1/1/random.php", null, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    // If the response is JSONObject instead of expected JSONArray
-                /*try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
                     try {
                         final JSONObject itm = (JSONObject) ((JSONArray) response.get("drinks")).get(0);
-                        Drink d = new Drink(itm.get("idDrink").toString(), itm.get("strDrink").toString(), null, itm.get("strDrinkThumb").toString());
+                        Drink d = new Drink(itm.getString("idDrink"),
+                                            itm.getString("strDrink"), null,
+                                            itm.getString("strDrinkThumb"),
+                                            itm.getString("strInstructions"));
                         final Drink dr = d;
 
                         Thread h = new Thread(new Runnable() {
@@ -126,32 +134,53 @@ public class MainActivity extends AppCompatActivity implements CustomCardAdapter
                         });
                         h.start();
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    //buscador.setText(response.toString());
+                    } catch (JSONException e) { e.printStackTrace(); }
                 }
 
                 @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONArray timeline) {
-                    // Pull out the first event on the public timeline
-                    JSONObject firstEvent;
-                    try {
-                        firstEvent = (JSONObject) timeline.get(0);
-                        //buscador.setText(firstEvent.toString());
-                    } catch (JSONException e) {
-                        buscador.setText(e.getMessage());
-                    }
-                }
+                public void onSuccess(int statusCode, Header[] headers, JSONArray timeline) {}
             });
         }else {
             //makeCard(randomDrinks);
         }
     }
 
-    public void makeCard(JSONArray data) {
-        cardAdapter.setDatos(data);
-        cardAdapter.notifyDataSetChanged();
+    public void getSomeIngridients() {
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.get("https://www.thecocktaildb.com/api/json/v1/1/list.php?i=list", null, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                try {
+                    final JSONArray items = (JSONArray) response.get("drinks");
+
+                    for(int i = 0; i < 13; i++) {
+                        JSONObject obj = (JSONObject) items.get(i);
+                        //https://www.thecocktaildb.com/api/json/v1/1/search.php?i=vodka
+                        AsyncHttpClient client = new AsyncHttpClient();
+                        client.get("https://www.thecocktaildb.com/api/json/v1/1/search.php?i=" + obj.getString("strIngredient1"), null, new JsonHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                                try {
+                                final JSONObject items = (JSONObject) ((JSONArray) response.get("ingredients")).get(0);
+                                ingredientes.add(new Ingredient(items.getString("idIngredient"),
+                                                                items.getString("strIngredient")));
+
+                                } catch (JSONException e) { e.printStackTrace(); }
+                            }
+
+                            @Override
+                            public void onSuccess(int statusCode, Header[] headers, JSONArray timeline) {}
+                        });
+                    }
+
+                } catch (JSONException e) { e.printStackTrace(); }
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray timeline) {}
+        });
     }
 
     @Override
@@ -170,10 +199,8 @@ public class MainActivity extends AppCompatActivity implements CustomCardAdapter
     @Override
     public void onClick(View view) {
         if(view == reloadRandoms) {
-
             int fin = bebidas.size();
             bebidas.clear();
-            //bebidas.removeAll(bebidas);
             cardAdapter.notifyItemRangeRemoved(0, fin);
             cardAdapter.notifyDataSetChanged();
             fillRandomDrinks();

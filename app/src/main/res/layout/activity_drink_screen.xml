@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:paddingTop="240px">
+            android:paddingTop="220px">
 
             <TextView
                 android:id="@+id/drinkName"
@@ -57,6 +57,16 @@
                 android:textColor="#ffa41b"
                 android:textSize="30sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/drinkDesk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40px"
+                android:maxWidth="800px"
+                android:text="TextView"
+                android:textAlignment="center"
+                android:textSize="16sp" />
         </LinearLayout>
     </ScrollView>
 
@@ -97,8 +107,10 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="right"
+                    android:elevation="4px"
+                    android:gravity="bottom|right"
                     android:orientation="horizontal"
+                    android:paddingBottom="20px"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
@@ -107,9 +119,12 @@
                         android:id="@+id/likeButton"
                         android:layout_width="100px"
                         android:layout_height="100px"
-                        android:layout_marginTop="20dp"
-                        android:layout_marginEnd="20dp"
-                        android:background="@drawable/like" />
+                        android:layout_marginTop="20px"
+                        android:layout_marginEnd="20px"
+                        android:background="@drawable/round_rect"
+                        android:foreground="@drawable/like"
+                        android:foregroundTint="#ccc"
+                        android:padding="50px" />
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
