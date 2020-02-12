@@ -46,13 +46,29 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:background="@drawable/round_rect"
-            android:gravity="center_horizontal|center_vertical"
-            android:orientation="vertical"
+            android:gravity=""
+            android:orientation="horizontal"
             android:padding="20px"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20px"
+                android:layout_marginRight="20px"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/btnMenu"
+                    android:layout_width="50px"
+                    android:layout_height="50px"
+                    android:background="@drawable/menu"
+                    android:padding="40px"
+                    android:scaleType="centerInside" />
+            </LinearLayout>
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
