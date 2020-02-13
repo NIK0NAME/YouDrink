@@ -2,11 +2,16 @@ package com.example.doyoudrink;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
@@ -14,11 +19,19 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.textfield.TextInputEditText;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
+
+import cz.msebera.android.httpclient.Header;
 
 public class AppScreen extends AppCompatActivity implements View.OnClickListener {
     public static DbManager dbManager;
@@ -26,6 +39,8 @@ public class AppScreen extends AppCompatActivity implements View.OnClickListener
     public static User user;
     public NavigationView navigation;
     public int frPos;
+    public TextInputEditText buscador;
+    public SearcScreen searcScreen;
 
     public ImageButton btnMenu;
     @Override
@@ -35,9 +50,12 @@ public class AppScreen extends AppCompatActivity implements View.OnClickListener
 
         drawerLayout = findViewById(R.id.drawer_layout);
         btnMenu = findViewById(R.id.btnMenu);
+        buscador = findViewById(R.id.buscador);
         AppScreen.user = null;
 
         btnMenu.setOnClickListener(this);
+
+        searcScreen = null;
 
         navigation = (NavigationView) findViewById(R.id.navigation);
         navigation.setCheckedItem(0);
@@ -45,6 +63,54 @@ public class AppScreen extends AppCompatActivity implements View.OnClickListener
         if (navigation != null) {
             setupDrawerContent(navigation);
         }
+
+        buscador.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(!buscador.getText().toString().equals("")) {
+                    if(frPos != 1) {
+                        frPos = 1;
+                        setFragment(frPos);
+                    }
+                    AsyncHttpClient client = new AsyncHttpClient();
+                    final ArrayList<String> ar = new ArrayList<>();
+                    client.get("https://www.thecocktaildb.com/api/json/v1/1/search.php?s=" + charSequence, null, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                            try {
+                                JSONArray items = new JSONArray();
+
+                                if(!response.getString("drinks").equals("null")) {
+                                    items = (JSONArray) response.get("drinks");
+                                }
+
+
+                                for(int i = 0; i < items.length(); i++) {
+                                    JSONObject obj = (JSONObject) items.get(i);
+                                    //https://www.thecocktaildb.com/api/json/v1/1/search.php?i=vodka
+                                    ar.add(obj.getString("strDrink"));
+                                }
+                                searcScreen.setSearch(ar);
+                            } catch (JSONException e) { e.printStackTrace(); }
+                        }
+
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONArray timeline) {}
+                    });
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
         AppScreen.dbManager = new DbManager(this, "drinkData", null, 1);
 
@@ -99,8 +165,8 @@ public class AppScreen extends AppCompatActivity implements View.OnClickListener
             case 1:
                 fragmentManager = getSupportFragmentManager();
                 fragmentTransaction = fragmentManager.beginTransaction();
-                MainScreenFragment mmm = new MainScreenFragment();
-                fragmentTransaction.replace(R.id.fragment, mmm);
+                searcScreen = new SearcScreen();
+                fragmentTransaction.replace(R.id.fragment, searcScreen);
                 //fragmentTransaction.add(R.id.fragment, mmm);
                 fragmentTransaction.commit();
                 break;

@@ -77,6 +77,35 @@
                 android:layout_height="match_parent"
                 android:layout_marginTop="20px"
                 android:background="@drawable/round_rect"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingTop="100px"
+                android:paddingBottom="100px">
+
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20px"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/no_do_drugs" />
+
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Drink responsably"
+                    android:textAlignment="center"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20px"
+                android:background="@drawable/round_rect"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -99,9 +128,46 @@
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/ingre_list"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:minHeight="400px"/>
 
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20px"
+                android:background="@drawable/round_rect"
+                android:orientation="vertical"
+                android:paddingTop="40px"
+                android:paddingBottom="10px">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="40px"
+                    android:layout_marginRight="30px"
+                    android:gravity="end"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20px"
+                        android:text="Popular drinks"
+                        android:textColor="#ffa41b"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/popular_drink_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:minHeight="400px" />
             </LinearLayout>
 
         </LinearLayout>

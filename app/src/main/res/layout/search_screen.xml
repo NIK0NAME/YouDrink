@@ -3,13 +3,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingLeft="40px"
+    android:paddingTop="20px"
+    android:paddingRight="40px"
+    android:paddingBottom="20px">
 
-    <TextView
-        android:id="@+id/textView5"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Search screen fragment"
-        android:textAlignment="center"
-        android:textSize="29sp" />
+        android:layout_height="match_parent"
+        android:background="@drawable/round_rect"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/searchList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
 </LinearLayout>

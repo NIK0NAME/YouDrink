@@ -82,7 +82,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40px"
+                android:backgroundTint="@color/colorPrimaryDark"
                 android:text="Go in" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnNoAcount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20px"
+                android:text="Hove no acount?" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

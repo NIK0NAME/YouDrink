@@ -36,6 +36,8 @@
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="80dp"
+        android:paddingBottom="60px"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,9 +46,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="50px"
+            android:layout_marginTop="40px"
+            android:layout_marginRight="50px"
+            android:background="@drawable/round_rect"
+            android:backgroundTint="@color/colorPrimaryDark"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:paddingTop="220px">
+            android:paddingTop="120px"
+            android:paddingBottom="60px">
 
             <TextView
                 android:id="@+id/drinkName"
@@ -58,14 +66,70 @@
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
+            <LinearLayout
+                android:layout_width="800px"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="70px"
+                android:background="@drawable/round_rect"
+                android:backgroundTint="#fff"
+                android:orientation="vertical"
+                android:padding="40px">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textView8"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Category"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/drnkCategory"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="TextView"
+                        android:textAlignment="textEnd" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40px"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textView10"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Glass"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/drnkGlass"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="TextView"
+                        android:textAlignment="textEnd" />
+                </LinearLayout>
+
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/drinkDesk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40px"
+                android:lineSpacingExtra="1sp"
                 android:maxWidth="800px"
                 android:text="TextView"
                 android:textAlignment="center"
+                android:textColor="#fff"
                 android:textSize="16sp" />
         </LinearLayout>
     </ScrollView>
@@ -98,6 +162,7 @@
                     android:id="@+id/drinkImage"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
+                    android:elevation="4px"
                     android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -106,14 +171,26 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:elevation="4px"
-                    android:gravity="bottom|right"
+                    android:gravity="bottom|right|center_vertical"
                     android:orientation="horizontal"
+                    android:paddingLeft="20px"
                     android:paddingBottom="20px"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <TextView
+                        android:id="@+id/drnkAlcohol"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="+18"
+                        android:textAlignment="viewStart"
+                        android:textColor="#D81B10"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
 
                     <ImageButton
                         android:id="@+id/likeButton"

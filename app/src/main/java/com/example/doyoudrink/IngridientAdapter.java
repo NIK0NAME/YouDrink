@@ -1,65 +1,53 @@
 package com.example.doyoudrink;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.graphics.drawable.RoundedBitmapDrawable;
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 
-public class CustomCardAdapter extends RecyclerView.Adapter<CustomCardAdapter.MyViewHolder> {
+public class IngridientAdapter extends RecyclerView.Adapter<IngridientAdapter.MyViewHolder> {
     public Context cnt;
-    public List<Drink> datos;
-    public ItemClickListener mClickListener;
+    public List<Ingredient> datos;
+    public IngridientAdapter.ItemClickListener mClickListener;
     public int count;
-    public CustomCardAdapter(Context cnt, List datos, int count) {
+    public IngridientAdapter(Context cnt, List datos, int count) {
         this.cnt = cnt;
         this.datos = datos;
         this.count = count;
-
     }
 
     @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.drink_card, parent, false);
-        return new MyViewHolder(view);
-    }
-
-    public Drink getDataItem(int pos) {
-        return datos.get(pos);
+    public IngridientAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ingridient_card, parent, false);
+        return new IngridientAdapter.MyViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         String animal = null;
         Thread getImg;
 
-        Drink obj = this.datos.get(position);
+        Ingredient obj = this.datos.get(position);
 
         holder.card_title.setText(obj.name);
-        holder
-                .setImage(obj.img);
+        holder.setImage(obj.img);
     }
+
+    public Ingredient getDataItem(int pos) {
+        return datos.get(pos);
+    }
+
 
     @NonNull
 
@@ -88,8 +76,8 @@ public class CustomCardAdapter extends RecyclerView.Adapter<CustomCardAdapter.My
             super(itemView);
             this.itemView = itemView;
             itemView.setOnClickListener(this);
-            card_title = itemView.findViewById(R.id.card_title);
-            card_img = itemView.findViewById(R.id.card_img);
+            card_title = itemView.findViewById(R.id.int_title);
+            card_img = itemView.findViewById(R.id.ing_img);
             cou = count;
         }
 
@@ -103,7 +91,7 @@ public class CustomCardAdapter extends RecyclerView.Adapter<CustomCardAdapter.My
         }
     }
 
-    void setClickListener(ItemClickListener itemClickListener) {
+    void setClickListener(IngridientAdapter.ItemClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
     }
 

@@ -23,7 +23,7 @@ public class DrinkScreen extends AppCompatActivity implements View.OnClickListen
     public ImageButton exitDrink;
     public Drink drink;
     public ImageView drinkImage;
-    public TextView drinkName, drinkDesk;
+    public TextView drinkName, drinkDesk, drinkCat, drinkGlass, drnkAlcohol;
     public DbManager dbManager;
     public ImageButton likeButton;
 
@@ -37,6 +37,9 @@ public class DrinkScreen extends AppCompatActivity implements View.OnClickListen
         drinkName = findViewById(R.id.drinkName);
         likeButton = findViewById(R.id.likeButton);
         drinkDesk = findViewById(R.id.drinkDesk);
+        drinkCat = findViewById(R.id.drnkCategory);
+        drinkGlass = findViewById(R.id.drnkGlass);
+        drnkAlcohol = findViewById(R.id.drnkAlcohol);
 
         exitDrink.setOnClickListener(this);
         likeButton.setOnClickListener(this);
@@ -54,6 +57,11 @@ public class DrinkScreen extends AppCompatActivity implements View.OnClickListen
         }
         drinkName.setText(drink.name);
         drinkDesk.setText(drink.desc);
+        drinkCat.setText(drink.cat);
+        drinkGlass.setText(drink.glass);
+        if(!this.drink.alcohol.equals("Alcoholic")) {
+            drnkAlcohol.setText("");
+        }
 
         Thread h = new Thread(new Runnable() {
             @Override
