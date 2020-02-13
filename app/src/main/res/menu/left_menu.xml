@@ -3,10 +3,16 @@
     <group>
         <item
             android:id="@+id/home"
+            android:checkable="false"
             android:checked="true"
             android:title="Home"></item>
-        <item android:id="@+id/search" android:title="Search"></item>
-        <item android:id="@+id/profile" android:title="Profile"></item>
+        <item
+            android:id="@+id/search"
+            android:title="Search"></item>
+        <item
+            android:id="@+id/profile"
+            android:checkable="false"
+            android:title="Profile"></item>
         <item
             android:id="@+id/configuration_section"
             android:title="Configuracion">
@@ -14,6 +20,7 @@
                 <item
                     android:id="@+id/nav_log"
                     android:icon="@android:drawable/ic_secure"
+                    android:iconTint="@color/colorPrimaryDark"
                     android:title="Iniciar sesion" />
             </menu>
         </item>

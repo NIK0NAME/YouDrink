@@ -8,11 +8,15 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import java.util.Date;
+
 public class DbManager extends SQLiteOpenHelper {
     public String userTable =   "CREATE TABLE user (" +
                                 "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                                 "username VARCHAR(20)," +
-                                "pass VARCHAR(20)" +
+                                "pass VARCHAR(20)," +
+                                "name VARCHAR(30)," +
+                                "birth DATE" +
                                 ");";
     public String likeDrinks =  "CREATE TABLE likedrinks (" +
                                 "userId INTEGER," +
@@ -35,16 +39,35 @@ public class DbManager extends SQLiteOpenHelper {
         }
     }
 
-    public String addUser(String username, String pass) {
+    public int addUser(String username, String pass, String name, String birth) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("username", username);
         cv.put("pass", pass);
+        cv.put("name", name);
+        cv.put("birth", birth);
         try {
             long id = db.insert("user", null, cv);
-            return String.valueOf(id);
+            return 1;
         }catch(Exception ex){
-            return ex.toString();
+            ex.printStackTrace();
+            return -1;
+        }
+    }
+
+    public int changeUser(int id, String username, String pass, String name) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("username", username);
+        cv.put("pass", pass);
+        cv.put("name", name);
+        try {
+            db.update("user", cv, "_id=" + id, null);
+            AppScreen.user = new User(id, username, name, pass);
+            return 1;
+        }catch(Exception ex){
+            ex.printStackTrace();
+            return -1;
         }
     }
 
@@ -54,16 +77,21 @@ public class DbManager extends SQLiteOpenHelper {
         try {
             int ret;
             String[] args = new String[] {user, pass};
-            Cursor c = db.rawQuery(" SELECT COUNT(username), _id FROM user WHERE username=? AND pass=?", args);
+            Cursor c = db.rawQuery(" SELECT COUNT(*), _id, name, pass FROM user WHERE username=? AND pass=? GROUP BY _id", args);
             c.moveToFirst();
-            int num = c.getInt(0);
+            int num = 0;
+            if(c.getCount() > 0) {
+                num = c.getInt(0);
+            }
             if(num > 0) {
                 ret = c.getInt(1);
+                AppScreen.user = new User(ret, user, c.getString(2), c.getString(3));
             }else {
                 ret = -2;
             }
             return ret;
         }catch (Exception ex) {
+            ex.printStackTrace();
             return -1;
         }
     }
@@ -121,7 +149,12 @@ public class DbManager extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
+    public void onUpgrade(SQLiteDatabase db, int i, int i1) {
+        try {
+            db.execSQL(userTable);
+            db.execSQL(likeDrinks);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

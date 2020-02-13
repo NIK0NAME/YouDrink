@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -47,7 +48,7 @@ public class DrinkScreen extends AppCompatActivity implements View.OnClickListen
         this.drink = (Drink) getIntent().getSerializableExtra("drink");
 
         if(AppScreen.user != null) {
-            if(AppScreen.dbManager.doLikeDrink(MainActivity.user.id, this.drink.id)) {
+            if(AppScreen.dbManager.doLikeDrink(AppScreen.user.id, this.drink.id)) {
                 likeButton.setForegroundTintList(ColorStateList.valueOf(Color.RED));
             }else {
                 likeButton.setForegroundTintList(ColorStateList.valueOf(Color.GRAY));
@@ -94,11 +95,14 @@ public class DrinkScreen extends AppCompatActivity implements View.OnClickListen
             finish();
         }else if(view == likeButton) {
             if(AppScreen.user != null) {
-                int res = AppScreen.dbManager.likeDrink(MainActivity.user.id, this.drink.id);
+                int res = AppScreen.dbManager.likeDrink(AppScreen.user.id, this.drink.id);
+                View contextView = findViewById(R.id.drinikScreenContent);
                 if(res == 1) {
                     likeButton.setForegroundTintList(ColorStateList.valueOf(Color.RED));
+                    Snackbar.make(contextView, "Yo like " + this.drink.name, Snackbar.LENGTH_LONG).show();
                 }else if(res == 0) {
                     likeButton.setForegroundTintList(ColorStateList.valueOf(Color.GRAY));
+                    Snackbar.make(contextView, "Dont like " + this.drink.name + " anymore", Snackbar.LENGTH_LONG).show();
                 }
             }else {
                 AlertDialog dialog = new MaterialAlertDialogBuilder(this)

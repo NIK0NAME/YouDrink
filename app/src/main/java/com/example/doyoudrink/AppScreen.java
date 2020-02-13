@@ -1,5 +1,7 @@
 package com.example.doyoudrink;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -9,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -18,7 +21,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -41,6 +46,8 @@ public class AppScreen extends AppCompatActivity implements View.OnClickListener
     public int frPos;
     public TextInputEditText buscador;
     public SearcScreen searcScreen;
+    public MainActivity mainScreen;
+    public MenuItem configuration_section;
 
     public ImageButton btnMenu;
     @Override
@@ -51,11 +58,15 @@ public class AppScreen extends AppCompatActivity implements View.OnClickListener
         drawerLayout = findViewById(R.id.drawer_layout);
         btnMenu = findViewById(R.id.btnMenu);
         buscador = findViewById(R.id.buscador);
+        configuration_section = findViewById(R.id.configuration_section);
+
         AppScreen.user = null;
+
 
         btnMenu.setOnClickListener(this);
 
         searcScreen = null;
+        mainScreen = new MainActivity(this);
 
         navigation = (NavigationView) findViewById(R.id.navigation);
         navigation.setCheckedItem(0);
@@ -82,7 +93,7 @@ public class AppScreen extends AppCompatActivity implements View.OnClickListener
                     client.get("https://www.thecocktaildb.com/api/json/v1/1/search.php?s=" + charSequence, null, new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-
+                            ArrayList<Drink> drks = new ArrayList<>();
                             try {
                                 JSONArray items = new JSONArray();
 
@@ -95,8 +106,15 @@ public class AppScreen extends AppCompatActivity implements View.OnClickListener
                                     JSONObject obj = (JSONObject) items.get(i);
                                     //https://www.thecocktaildb.com/api/json/v1/1/search.php?i=vodka
                                     ar.add(obj.getString("strDrink"));
+                                    drks.add(new Drink(obj.getString("idDrink"),
+                                            obj.getString("strDrink"), null,
+                                            obj.getString("strDrinkThumb"),
+                                            obj.getString("strInstructions"),
+                                            obj.getString("strCategory"),
+                                            obj.getString("strGlass"),
+                                            obj.getString("strAlcoholic")));
                                 }
-                                searcScreen.setSearch(ar);
+                                searcScreen.makeCoolList(drks);
                             } catch (JSONException e) { e.printStackTrace(); }
                         }
 
@@ -112,15 +130,16 @@ public class AppScreen extends AppCompatActivity implements View.OnClickListener
             }
         });
 
-        AppScreen.dbManager = new DbManager(this, "drinkData", null, 1);
+        AppScreen.dbManager = new DbManager(this, "drinkData", null, 2);
 
-        frPos = 0;
         setFragment(frPos);
 
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
         final Intent i = new Intent(this, LoginScreen.class);
+        final Intent i2 = new Intent(this, ProfileScreen.class);
+        final Context cnt = this;
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
 
@@ -130,15 +149,45 @@ public class AppScreen extends AppCompatActivity implements View.OnClickListener
                         menuItem.setChecked(true);
                         // Crear nuevo fragmento
                         if(menuItem.getItemId() == R.id.nav_log) {
-                            drawerLayout.closeDrawer(GravityCompat.START);
-                            startActivity(i);
+                            if(AppScreen.user == null) {
+                                drawerLayout.closeDrawer(GravityCompat.START);
+                                startActivityForResult(i, 2);
+                            }else {
+                                new MaterialAlertDialogBuilder(cnt)
+                                        .setTitle("Goin home?")
+                                        .setMessage("Are you sure you wana log out, sure dude?")
+                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                AppScreen.user = null;
+                                                MenuItem menuOpt = navigation.findViewById(R.id.nav_log);
+                                                menuOpt.setTitle("Iniciar sesion");
+                                            }
+                                        })
+                                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+
+                                            }
+                                        })
+                                        .show();
+                            }
                             //startActivityForResult(i, 20);
                         }else if(menuItem.getItemId() == R.id.search && frPos != 1) {
-                            frPos = 1;
+
                             setFragment(1);
                         }else if(menuItem.getItemId() == R.id.home && frPos != 0) {
-                            frPos = 0;
+
                             setFragment(0);
+                        }else if(menuItem.getItemId() == R.id.profile) {
+                            if(AppScreen.user != null) {
+                                startActivity(i2);
+                            }else {
+                                drawerLayout.closeDrawer(GravityCompat.START);
+                                View contextView2 = findViewById(R.id.mainScreenContext);
+                                Snackbar.make(contextView2, "Please log in, dude", Snackbar.LENGTH_LONG).show();
+                            }
+
                         }
                         String title = menuItem.getTitle().toString();
                         //selectItem(title);
@@ -148,7 +197,22 @@ public class AppScreen extends AppCompatActivity implements View.OnClickListener
         );
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == 2) {
+            //login done
+            MenuItem menuOpt = navigation.findViewById(R.id.nav_log);
+            menuOpt.setTitle("Log out, " + AppScreen.user.name);
+            View contextView = findViewById(R.id.mainScreenContext);
+
+            Snackbar.make(contextView, "Welcome " + AppScreen.user.name, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
     public void setFragment(int position) {
+        frPos = position;
         FragmentManager fragmentManager;
         FragmentTransaction fragmentTransaction;
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -156,15 +220,18 @@ public class AppScreen extends AppCompatActivity implements View.OnClickListener
         }
         switch (position) {
             case 0:
+                buscador.setText("");
+                buscador.clearFocus();
                 fragmentManager = getSupportFragmentManager();
                 fragmentTransaction = fragmentManager.beginTransaction();
-                MainActivity mns = new MainActivity(this);
-                fragmentTransaction.replace(R.id.fragment, mns);
+                fragmentTransaction.setCustomAnimations(R.anim.enter_form_left, R.anim.exit_to_left);
+                fragmentTransaction.replace(R.id.fragment, mainScreen);
                 fragmentTransaction.commit();
                 break;
             case 1:
                 fragmentManager = getSupportFragmentManager();
                 fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right);
                 searcScreen = new SearcScreen();
                 fragmentTransaction.replace(R.id.fragment, searcScreen);
                 //fragmentTransaction.add(R.id.fragment, mmm);
@@ -178,10 +245,25 @@ public class AppScreen extends AppCompatActivity implements View.OnClickListener
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         }else if(frPos == 1){
-            frPos = 0;
+
             setFragment(0);
         }else {
-            finish();
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Exit app")
+                    .setMessage("Are you sure you wana EXIT APP?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .show();
         }
     }
 
