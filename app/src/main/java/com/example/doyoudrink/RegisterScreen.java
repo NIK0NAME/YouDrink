@@ -26,33 +26,36 @@ public class RegisterScreen extends AppCompatActivity implements View.OnClickLis
         pass = findViewById(R.id.txtPassReg);
         name = findViewById(R.id.txtNameReg);
         birth = findViewById(R.id.txtDateReg);
+        check = findViewById(R.id.checkRegister);
 
         register = findViewById(R.id.btnRegister);
-        goLogin = findViewById(R.id.btnLogIn);
 
         register.setOnClickListener(this);
-        goLogin.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
-        if(view == goLogin) {
-            Intent i = new Intent(this, LoginScreen.class);
-            startActivity(i);
-            finish();
-        }else if(view == register) {
+        if(view == register) {
             String us, na, pa, da;
             us = username.getText().toString();
             na = name.getText().toString();
             pa = pass.getText().toString();
             da = birth.getText().toString();
-
-            int res = AppScreen.dbManager.addUser(us, pa, na, da);
             View contextView = findViewById(R.id.registerContext);
-            if(res == -1) {
-                Snackbar.make(contextView, "Somthing did not work on this one", Snackbar.LENGTH_LONG).show();
+
+            if(!us.equals("") && !na.equals("") && !pa.equals("") && !da.equals("") && check.isChecked()) {
+                int res = AppScreen.dbManager.addUser(us, pa, na, da);
+
+                if(res == -1) {
+                    Snackbar.make(contextView, "Somthing did not work on this one", Snackbar.LENGTH_LONG).show();
+                }else if(res == -2) {
+                    username.setError("Username exist");
+                }else {
+                    Snackbar.make(contextView, "Seems user is done", Snackbar.LENGTH_LONG).show();
+                    finish();
+                }
             }else {
-                Snackbar.make(contextView, "Seems user is done", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(contextView, "Fill data pliz", Snackbar.LENGTH_LONG).show();
             }
 
         }

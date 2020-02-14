@@ -2,6 +2,7 @@ package com.example.doyoudrink;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -18,7 +19,7 @@ public class ProfileScreen extends AppCompatActivity implements View.OnClickList
     public TextInputEditText user, name, pass;
     public TextView textDrinkNum;
     public LinearLayout butonPlace;
-    public MaterialButton btnEditPro, btnSavePro;
+    public MaterialButton btnEditPro, btnSavePro, btnDelAcount;
     public User u;
 
     @Override
@@ -33,6 +34,7 @@ public class ProfileScreen extends AppCompatActivity implements View.OnClickList
         butonPlace = findViewById(R.id.butonPlace);
         btnEditPro = findViewById(R.id.btnEditPro);
         btnSavePro = findViewById(R.id.btnSavePro);
+        btnDelAcount = findViewById(R.id.btnDelAcount);
 
         btnSavePro.setVisibility(View.GONE);
 
@@ -46,6 +48,9 @@ public class ProfileScreen extends AppCompatActivity implements View.OnClickList
 
         btnEditPro.setOnClickListener(this);
         btnSavePro.setOnClickListener(this);
+        btnDelAcount.setOnClickListener(this);
+
+        btnDelAcount.setVisibility(View.GONE);
 
         Cursor c = AppScreen.dbManager.getLikeDrinks(u.id);
 
@@ -71,12 +76,14 @@ public class ProfileScreen extends AppCompatActivity implements View.OnClickList
             if(user.isEnabled()) {
                 toggleAll();
                 btnEditPro.setText("Edit");
+                btnDelAcount.setVisibility(View.GONE);
                 user.setText(u.username);
                 name.setText(u.name);
                 pass.setText(u.pass);
                 btnSavePro.setVisibility(View.GONE);
             }else {
                 toggleAll();
+                btnDelAcount.setVisibility(View.VISIBLE);
                 btnEditPro.setText("Cancel");
                 btnSavePro.setVisibility(View.VISIBLE);
             }
@@ -97,6 +104,11 @@ public class ProfileScreen extends AppCompatActivity implements View.OnClickList
                     name.setText(this.u.name);
                     pass.setText(this.u.pass);
                     btnSavePro.setVisibility(View.GONE);
+
+                    Intent intent = new Intent();
+                    intent.putExtra("MESSAGE", "change");
+                    setResult(2, intent);
+
                     Snackbar.make(contextView, "cool change", Snackbar.LENGTH_LONG).show();
                 }else {
                     user.setText(this.u.username);
@@ -104,6 +116,17 @@ public class ProfileScreen extends AppCompatActivity implements View.OnClickList
                     pass.setText(this.u.pass);
                     Snackbar.make(contextView, "not today", Snackbar.LENGTH_LONG).show();
                 }
+            }
+        }else if(view == btnDelAcount) {
+            int res = AppScreen.dbManager.deleteAcount(this.u.id);
+            if(res == 1) {
+                AppScreen.user = null;
+                Intent intent = new Intent();
+                intent.putExtra("MESSAGE", "change");
+                setResult(2, intent);
+                finish();
+            }else {
+
             }
         }
     }

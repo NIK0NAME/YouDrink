@@ -93,7 +93,7 @@
                 android:orientation="horizontal">
 
                 <CheckBox
-                    android:id="@+id/checkLogin"
+                    android:id="@+id/checkRegister"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -112,12 +112,7 @@
                 android:backgroundTint="@color/colorPrimaryDark"
                 android:text="Make acount" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnLogIn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20px"
-                android:text="Log in" />
+
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

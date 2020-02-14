@@ -28,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="200px"
-                app:srcCompat="@drawable/no_do_drugs" />
+                app:srcCompat="@drawable/profile_icon" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -116,6 +116,22 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="40px"
                     android:text="Save" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20px"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDelAcount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#e74c3c"
+                    android:text="Delete Acount"
+                    app:backgroundTint="#e74c3c" />
             </LinearLayout>
 
         </LinearLayout>

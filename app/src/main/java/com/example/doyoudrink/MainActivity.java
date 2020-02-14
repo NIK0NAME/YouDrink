@@ -51,17 +51,13 @@ public class MainActivity extends Fragment implements CustomCardAdapter.ItemClic
     //https://colorhunt.co/palette/171238
 
     public JSONObject object;
-    public TextInputEditText buscador;
-    public LinearLayout firstSlide;
     public RecyclerView meet_a_drink_list, popular_drink_list, ingre_list;
     public CustomCardAdapter cardAdapter, popularAdapter;
     public IngridientAdapter ingridintAdapter;
-    public NavigationView navigation;
     public JSONArray randomDrinks;
     public ImageButton reloadRandoms, btnMenu;
     public List<Drink> bebidas, popularDrinks;
     public List<Ingredient> ingredientes;
-    public static DbManager dbManager;
     public DrawerLayout drawerLayout;
     public static User user;
     public Context cnt;

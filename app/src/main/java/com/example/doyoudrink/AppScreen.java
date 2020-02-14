@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -61,6 +62,8 @@ public class AppScreen extends AppCompatActivity implements View.OnClickListener
         configuration_section = findViewById(R.id.configuration_section);
 
         AppScreen.user = null;
+
+
 
 
         btnMenu.setOnClickListener(this);
@@ -130,7 +133,13 @@ public class AppScreen extends AppCompatActivity implements View.OnClickListener
             }
         });
 
-        AppScreen.dbManager = new DbManager(this, "drinkData", null, 2);
+        AppScreen.dbManager = new DbManager(this, "drinkData", null, 3);
+
+        int saveRes = AppScreen.dbManager.getSaveUser();
+
+        if(saveRes == 1) {
+            menuSate();
+        }
 
         setFragment(frPos);
 
@@ -159,9 +168,11 @@ public class AppScreen extends AppCompatActivity implements View.OnClickListener
                                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
+                                                AppScreen.dbManager.removeSaved(AppScreen.user.id);
                                                 AppScreen.user = null;
-                                                MenuItem menuOpt = navigation.findViewById(R.id.nav_log);
-                                                menuOpt.setTitle("Iniciar sesion");
+                                                menuSate();
+
+                                                drawerLayout.closeDrawer(GravityCompat.START);
                                             }
                                         })
                                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -181,13 +192,16 @@ public class AppScreen extends AppCompatActivity implements View.OnClickListener
                             setFragment(0);
                         }else if(menuItem.getItemId() == R.id.profile) {
                             if(AppScreen.user != null) {
-                                startActivity(i2);
+                                startActivityForResult(i2, 3);
                             }else {
                                 drawerLayout.closeDrawer(GravityCompat.START);
                                 View contextView2 = findViewById(R.id.mainScreenContext);
                                 Snackbar.make(contextView2, "Please log in, dude", Snackbar.LENGTH_LONG).show();
                             }
 
+                        }else if(menuItem.getItemId() == R.id.favorite) {
+                            Intent inte = new Intent(cnt, LikeDrinkScreen.class);
+                            startActivity(inte);
                         }
                         String title = menuItem.getTitle().toString();
                         //selectItem(title);
@@ -197,17 +211,52 @@ public class AppScreen extends AppCompatActivity implements View.OnClickListener
         );
     }
 
+    public void menuSate() {
+        Menu menu = navigation.getMenu();
+        if(AppScreen.user != null) {
+            MenuItem menuOpt = menu.findItem(R.id.nav_log);
+            menuOpt.setTitle("Log out");
+
+            MenuItem pr = menu.findItem(R.id.profile);
+            pr.setTitle(AppScreen.user.name);
+
+            MenuItem menuOpt2 = menu.findItem(R.id.favorite);
+            menuOpt2.setVisible(true);
+        }else {
+            MenuItem menuOpt = menu.findItem(R.id.nav_log);
+            menuOpt.setTitle("Iniciar sesion");
+
+            MenuItem menuOpt2 = menu.findItem(R.id.favorite);
+            menuOpt2.setVisible(false);
+
+            MenuItem pr = menu.findItem(R.id.profile);
+            pr.setTitle("Profile");
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == 2) {
             //login done
-            MenuItem menuOpt = navigation.findViewById(R.id.nav_log);
-            menuOpt.setTitle("Log out, " + AppScreen.user.name);
-            View contextView = findViewById(R.id.mainScreenContext);
+            if(data != null) {
+                String res = data.getStringExtra("MESSAGE");
+                if(res.equals("done")) {
 
-            Snackbar.make(contextView, "Welcome " + AppScreen.user.name, Snackbar.LENGTH_LONG).show();
+                    menuSate();
+                    View contextView = findViewById(R.id.mainScreenContext);
+                    Snackbar.make(contextView, "Welcome " + AppScreen.user.name, Snackbar.LENGTH_LONG).show();
+                }
+            }
+        }else if(requestCode == 3) {
+            if(data != null) {
+                String res = data.getStringExtra("MESSAGE");
+                if(res.equals("change")) {
+
+                    menuSate();
+                }
+            }
         }
     }
 
